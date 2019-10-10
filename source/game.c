@@ -2,6 +2,7 @@
 #include "../header/io.h"
 #include "../header/rand.h"
 
+/* print troops places */
 void printTroops(char troops_arr[CELL][CELL], int flag){
     char troop;
     char* colorargs[] = {RED, NORMAL};
@@ -25,6 +26,8 @@ void printTroops(char troops_arr[CELL][CELL], int flag){
     }
     myputs("\n\n");
 }
+
+/* insert troops. coordinates will be determined by user */
 
 void insertusertroops(char userground [CELL][CELL]){
     int x,y;
@@ -50,10 +53,13 @@ void insertusertroops(char userground [CELL][CELL]){
     }
 }
 
+
 void printError(char msg[100]){
     char* strargs[] = {RED, msg, NORMAL};
     printout("\n##### %s%s%s #####\n", 0, 0, strargs);
 }
+
+/* insert troops. coordinates will be generated randomly by computer*/
 
 void insertcputroops(char cpuground[CELL][CELL], struct Game* play){
 //    srand(time(NULL));
@@ -81,6 +87,7 @@ void printWarn(char msg[100]){
     colorprint(msg, ORANGE, NORMAL);
 }
 
+
 char shoot(char enemyground[CELL][CELL], int x, int y){
     if(x >= CELL || y >= CELL){
         return 'F';
@@ -94,6 +101,7 @@ char shoot(char enemyground[CELL][CELL], int x, int y){
     }
 }
 
+/* Print colorful string */
 void colorprint(char* msg, char* color, char* normal){
   char* a[] = {color, msg, normal};
   printout("%s%s%s", 0, 0, a);

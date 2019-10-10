@@ -49,7 +49,7 @@ char* itos(int number){
     size++;
   }
 
-  str = (char *)_malloc(size+1);
+  str = (char *)_malloc(size+1);    /* Make Sure To FREE this*/
   if(str == NULL){
     return NULL;
   }

@@ -2,10 +2,13 @@
 
 #define GAME 1
 
-static char* COLORS[] = {"\033[m", "\033[31m", "\033[32m", "\033[33m", "\033[37m"};
+static char* COLORS[] = {"\033[m", "\033[31m", "\033[32m", "\033[33m", "\033[37m"}; /* list of colors for printing */
 
-#define CELL 5
-#define TROOPS 5
+#define CELL 5				/* Cells number */
+#define TROOPS 5			/* Troops number */
+
+/* pointer to colors in color list */
+
 #define GREEN COLORS[2]
 #define RED COLORS[1]
 #define WHITE COLORS[4]

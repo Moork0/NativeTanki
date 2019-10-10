@@ -4,10 +4,9 @@
 
 #include <unistd.h>
 #include <sys/syscall.h>
-//#include <string.h>
 #include "std.h"
 #define CLEAR() myputs("\e[1;1H\e[2J")  /* clear the terminal */
-#define EXIT_SUCCESS 0
+#define EXIT_SUCCESS 0					/* Exit code for success */
 
 int mystrlen(const char* s);
 void mystrcpy(char *d, const char *s, int size);
