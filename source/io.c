@@ -1,6 +1,5 @@
 #include <unistd.h>
 #include <sys/syscall.h>
-//#include <string.h>
 #include "../header/io.h"
 #include "../header/std.h"
 
@@ -39,7 +38,6 @@ void mystrcpy(char *d, const char *s, int size){
   *****
 
 */
-
 char* itos(int number){
   int temp = number;
   size_t size = 0;

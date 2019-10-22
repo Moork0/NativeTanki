@@ -8,7 +8,9 @@
 #define ALLOC_UNIT 3*sysconf(_SC_PAGESIZE)		/* Minimum number of bytes required for asking from OS */
 #define MIN_MEM 1*sysconf(_SC_PAGESIZE)			/* Minimum number of bytes required for releasing to OS */
 
-
+/*
+  Double linked list for handle memory chunks
+*/
 struct dl{
   struct dl *next;
   struct dl *prev;

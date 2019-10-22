@@ -2,7 +2,9 @@
 #include "../header/io.h"
 #include "../header/rand.h"
 
-/* print troops places */
+/* 
+    print troops places
+*/
 void printTroops(char troops_arr[CELL][CELL], int flag){
     char troop;
     char* colorargs[] = {RED, NORMAL};
@@ -11,7 +13,6 @@ void printTroops(char troops_arr[CELL][CELL], int flag){
         for(int j = 0; j < CELL; j++){
             troop = troops_arr[i][j];
             if(troop == '\0' && flag){  
-                //printout("\t\t%c\t", 0, &troop, 0);   
                 myputs("\t\t\t");         
             }else if(troop == 'X'){                
                 printout("\t\t%s[%c]%s\t", 0, &troop, colorargs);
@@ -27,8 +28,9 @@ void printTroops(char troops_arr[CELL][CELL], int flag){
     myputs("\n\n");
 }
 
-/* insert troops. coordinates will be determined by user */
-
+/*
+    insert troops. coordinates will be determined by user
+*/
 void insertusertroops(char userground [CELL][CELL]){
     int x,y;
     char t;
@@ -59,14 +61,14 @@ void printError(char msg[100]){
     printout("\n##### %s%s%s #####\n", 0, 0, strargs);
 }
 
-/* insert troops. coordinates will be generated randomly by computer*/
-
+/*
+    insert troops. coordinates will be generated randomly by computer
+*/
 void insertcputroops(char cpuground[CELL][CELL], struct Game* play){
 //    srand(time(NULL));
     int randi;
     int randj;
     int randt;
-//    char troop;
     for(int i = 0; i < TROOPS; i++){
         randi = _rand() % CELL;
         randj = _rand() % CELL;
@@ -87,7 +89,10 @@ void printWarn(char msg[100]){
     colorprint(msg, ORANGE, NORMAL);
 }
 
-
+/*
+    Shoot on a cooridante(x, y) and determine if 
+    any unit were shot.
+*/
 char shoot(char enemyground[CELL][CELL], int x, int y){
     if(x >= CELL || y >= CELL){
         return 'F';
@@ -101,7 +106,9 @@ char shoot(char enemyground[CELL][CELL], int x, int y){
     }
 }
 
-/* Print colorful string */
+/*
+    Print colorful string
+*/
 void colorprint(char* msg, char* color, char* normal){
   char* a[] = {color, msg, normal};
   printout("%s%s%s", 0, 0, a);

@@ -24,7 +24,7 @@ void *_sbrk(int size){
 }
 
 /*
-  Add block to head ordered by block address
+  Add block to "head" ordered by block address
 */
 void add(dl* block){
   dl *curr = head;
@@ -58,14 +58,12 @@ void add(dl* block){
       curr->next->next = temp;
       curr->next->next->prev = curr->next; // temp->prev = curr->next;
       curr->next->prev = curr;
-      //*head = curr;
       return;
     }
     curr = curr->next;
   }
 
   /* block should be the last */
-  //printf("%d\n", curr->size);
   curr->next = block;
   curr->next->next = NULL;
   curr->next->prev = curr;
@@ -78,25 +76,24 @@ void erase(dl *block){
   if(block == NULL || head == NULL){
     return;
   }
+  /* block is head. */
   if(block == head){
     curr->next->prev = curr->prev;
     head = curr->next;
-    //free(curr);
     return;
   }
   while(curr->next != NULL && block >= curr){
     if(curr == block){
       curr->next->prev = curr->prev;
       curr->prev->next = curr->next;
-      //free(curr);
       return;
     }
     curr = curr->next;
   }
+  /* block is last block in our double linked list */
   if(curr == block){
     curr->prev->next = NULL;
     head->prev = curr->prev;
-    //free(curr);
   }
 
 }
@@ -109,16 +106,27 @@ void erase(dl *block){
 */
 void merge(dl *block){
   dl *curr = head, *prev = NULL, *base = NULL, *end = head->prev;
-  void *program_break = _sbrk(0);
+  void *program_break = _sbrk(0); /* current break */
+  /* Search for block */
   while(curr != NULL && block >= curr){
     if(curr == block){
       break;
     }
     curr = curr->next;
   }
+  /*
+    check if block not found, then exit the function
+  */
+  if(curr == NULL){
+    return;
+  }
   prev = curr->prev;
-  base = curr;
-  if(prev->next != NULL && (BLOCK_MEM(prev)+prev->size) == curr){
+  base = curr; // this is a first block of the merging blocks.
+  /* 
+    Check if previous block is integratable with current block
+     then merge that two blocks.
+  */
+  if((BLOCK_MEM(prev)+prev->size) == curr){
     prev->size += sizeof(dl) + curr->size;
     prev->next = curr->next;
     if(curr->next){
@@ -127,7 +135,7 @@ void merge(dl *block){
         head->prev = prev;
         end = head->prev;
     }
-    base = prev;
+    base = prev; // prev should be first block of merging list
   }
 
   curr = curr->next;
@@ -139,11 +147,11 @@ void merge(dl *block){
     }
     curr = curr->next;
   }
-
-//  while(curr->next != NULL){
-//    curr = curr->next;
-//  }
-
+  /*
+    check if last block is correspound to the program break. 
+    check if last block is bigger than minimum amount of memory page size
+    then release that block to OS
+  */
   if(end->size >= MIN_MEM && (end + end->size + sizeof(dl)) == program_break){
     int brkresult = syscall(SYS_brk, end);
     if(brkresult == 0){
@@ -164,15 +172,18 @@ dl *split(dl *block, unsigned int size){
 }
 
 /*
-      search in the list of free memory blocks and 
-      return the suitable memory.
-      if could not find suitable chunk, ask OS
-      to give some space
+  search in the list of free memory blocks and 
+  return the suitable memory.
+  if could not find suitable chunk, ask OS to give some space
 */
 void *_malloc(unsigned int size){
   dl *curr = head, *sbrkptr = NULL, *splittedptr = NULL;
-  size = (size + 3) & ~3;
   unsigned int brk_size;
+  /* make size a factor of 4 */
+  size = (size + 3) & ~3;
+  /*
+    check if size > minimum amount of memory size for asking OS
+  */
   if(size <= ALLOC_UNIT){
     brk_size = ALLOC_UNIT;
   }else{
@@ -180,22 +191,33 @@ void *_malloc(unsigned int size){
   }
 
   while (curr && curr->next != NULL){
+    /* 
+      suitable memory found. return that
+    */
     if(curr->size == size){
       erase(curr);
       return BLOCK_MEM(curr);
     }
+    /* 
+      split the block size and return suitable memory chunk
+    */    
     if(curr->size > size){
       splittedptr = split(curr, size);
       return BLOCK_MEM(splittedptr);
     }
     curr = curr->next;
   }
-
+  /* 
+    no block found. ask OS
+  */
   sbrkptr = _sbrk((int)brk_size);
   if(sbrkptr == (void *)-1){
     return NULL;
   }
   sbrkptr->size = brk_size - sizeof(dl);
+  /* 
+    if allocated size > asked size, split the block and return new block.
+  */
   if(sbrkptr->size > size){
     splittedptr = split(sbrkptr, size);
     add(sbrkptr);
@@ -217,7 +239,9 @@ void _free(void *mem){
   mem = NULL;
 }
 
-
+/*
+  cleanup memory
+*/
 void _clean(){
   if(head){
     syscall(SYS_brk, head);
@@ -225,7 +249,10 @@ void _clean(){
   }
 }
 
-
+/*
+  implementation of c standard library of memset.
+  set each byte of ptr to value.
+*/
 void *_memset(void* ptr, int value, size_t n){
   unsigned char *mem = ptr, castvalue = value;
   for(size_t i = 0; i < n; i++){
