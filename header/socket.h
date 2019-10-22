@@ -1,3 +1,5 @@
+#ifndef SOCK_H
+#define SOCK_H 1
 #define IPV4 2
 #define TCP 1
 
@@ -31,3 +33,4 @@ int accept(int sockfd);
 int connect(int sockfd);
 int h2n(int number);
 int ip2n(const char* ip);
+#endif
